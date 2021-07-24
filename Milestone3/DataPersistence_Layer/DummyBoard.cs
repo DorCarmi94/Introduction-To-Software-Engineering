@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
-
 namespace Milestone3.DataPersistence_Layer
 {
-    
-
     [Serializable]
     class DummyBoard //: ISerializable
     {
@@ -17,6 +14,11 @@ namespace Milestone3.DataPersistence_Layer
             this.boardName = boardName;
             this.boardId = idb;
             this.columnsIDs = columnsList;
+        }
+        public DummyBoard(string boardName, string idb)
+        {
+            this.boardName = boardName;
+            this.boardId = idb;
         }
         public override string ToString()
         {

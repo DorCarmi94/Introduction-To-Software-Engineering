@@ -23,6 +23,7 @@
         <Label Content="Re-enter Password:" FontSize="18" HorizontalAlignment="Left" Margin="102,217,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.459,1.994" Width="189" FontWeight="Bold"/>
         <Label Content="Password should be between 4 to 20 characters,&#xD;&#xA;containing at least one small letter, one large letter and one number" FontSize="14" HorizontalAlignment="Left" Margin="10,368,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="PassVerify" HorizontalAlignment="Left" Height="34" Margin="306,217,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="133" FontFamily="Bodoni MT Black"/>
+        <Image HorizontalAlignment="Left" Height="159" Margin="497,99,0,0" VerticalAlignment="Top" Width="160" Source="pack://siteoforigin:,,,/Accessories/at-icon.png"/>
         <Label Content="Create New User" FontSize="40" FontWeight="Black" HorizontalAlignment="Left" Margin="89,23,0,0" VerticalAlignment="Top" Height="64" Width="379" Foreground="#FF1B88FF"/>
 
     </Grid>

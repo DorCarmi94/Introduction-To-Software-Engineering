@@ -128,9 +128,9 @@ namespace Milestone3.Presentation_Layer.Functionality
                     {
                         TaskID = currentTaskInfo[0],
                         CreationDate= DateTime.Parse(currentTaskInfo[1]),
-                        Description= currentTaskInfo[4],
-                        TaskTitle= currentTaskInfo[3],
-                        DueDate= DateTime.Parse(currentTaskInfo[5])
+                        Description= currentTaskInfo[3],
+                        TaskTitle= currentTaskInfo[2],
+                        DueDate= DateTime.Parse(currentTaskInfo[4])
                     };
 
                     tasks.Add(newTask);
@@ -158,6 +158,7 @@ namespace Milestone3.Presentation_Layer.Functionality
 
         public bool removeColumn(string columnID)
         {
+
             return service.removeColumnFromBoard(columnID);
         }
 

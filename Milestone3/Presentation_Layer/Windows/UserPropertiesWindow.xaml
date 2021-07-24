@@ -22,6 +22,7 @@
         <TextBox x:Name= "newPass_Box" FontSize="18" 
             Height="34" Margin="249,173,264.6,0" TextWrapping="Wrap" Text="{Binding NewPass, Mode=OneWayToSource}" VerticalAlignment="Top"/>
         <Button Content="Update Changes" HorizontalAlignment="Left" Margin="564,179,0,0" VerticalAlignment="Top" Width="163" Height="50" Click="Button_Click" Background="#FF1B88FF" FontWeight="Bold" FontSize="18" Foreground="White"/>
+        <Image HorizontalAlignment="Left" Height="146" Margin="578,28,0,0" VerticalAlignment="Top" Width="149" Source="pack://siteoforigin:,,,/bin/Debug/Accessories/User-Files-icon.png"/>
 
     </Grid>
 </Window>

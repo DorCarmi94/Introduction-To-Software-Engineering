@@ -18,6 +18,7 @@
         <TextBox Name="TitleTxtBox" Text="{Binding NewTaskTitle}" HorizontalAlignment="Left" Height="23" Margin="123,38,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="175"/>
         <TextBox Name="DescriptionTxtBox" HorizontalAlignment="Left" Height="57" Margin="123,75,0,0" TextWrapping="Wrap" Text="{Binding NewTaskDescription}" VerticalAlignment="Top" Width="175"/>
         <Label Content="Due Date:" HorizontalAlignment="Left" Margin="22,158,0,0" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+        <Image HorizontalAlignment="Left" Height="148" Margin="316,90,0,0" VerticalAlignment="Top" Width="176" Source="pack://siteoforigin:,,,/bin/Debug/Accessories/MetroUI-Other-Task-icon.png" Grid.ColumnSpan="2"/>
 
     </Grid>
 </Window>

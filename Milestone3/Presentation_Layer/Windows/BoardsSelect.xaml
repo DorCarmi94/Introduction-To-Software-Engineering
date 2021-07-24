@@ -1,0 +1,23 @@
+﻿<Window x:Class="Milestone3.Presentation_Layer.Windows.BoardsSelect"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Milestone3.Presentation_Layer.Windows"
+        mc:Ignorable="d"
+        Title="BoardsSelect" Height="450" Width="800">
+    <Grid>
+        <DataGrid Name="BoardsSelectDataGrid" HorizontalAlignment="Left" Height="299" Margin="30,90,0,0" VerticalAlignment="Top" Width="455"
+                IsReadOnly="True"
+                  AutoGenerateColumns="True"
+                  SelectedItem="{Binding SelectedBoard, Mode=TwoWay}" 
+            ItemsSource="{Binding BoardsGridView, Mode=TwoWay}" Background="White" BorderBrush="#FF1B88FF" Foreground="#FF1B88FF"/>
+        <Button Content="Open Board" HorizontalAlignment="Left" Margin="536,130,0,0" VerticalAlignment="Top" Width="139" Click="LoadSpecificBoard" Background="#FF1B88FF" BorderBrush="{x:Null}" Foreground="White" Height="38"/>
+        <Button Content="Add New Board" HorizontalAlignment="Left" Margin="536,220,0,0" VerticalAlignment="Top" Width="139" Click="AddingNewBoard" Background="#FF1B88FF" Foreground="White" BorderBrush="{x:Null}" Height="33"/>
+        <TextBox Visibility="Hidden" Name="NewBoardName" Text="{Binding NewBoardName, Mode=TwoWay}"  HorizontalAlignment="Left" Height="28" Margin="588,270,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="87"/>
+        <Button Visibility="Hidden" Name="AddButtonSend" Content="Add" HorizontalAlignment="Left" Margin="536,268,0,0" VerticalAlignment="Top" Width="47" Click="AddSend" Background="#FF1B88FF" Foreground="White" BorderBrush="{x:Null}" Height="30"/>
+        <Button Content="Remove Board" HorizontalAlignment="Left" Margin="536,175,0,0" VerticalAlignment="Top" Width="139" Click="RemoveBoardButton" Background="#FF1B88FF" BorderBrush="{x:Null}" Foreground="White" Height="38"/>
+        <Label Content="Manage you boards" HorizontalAlignment="Left" Margin="30,10,0,0" VerticalAlignment="Top" FontSize="48" FontWeight="Bold"/>
+
+    </Grid>
+</Window>

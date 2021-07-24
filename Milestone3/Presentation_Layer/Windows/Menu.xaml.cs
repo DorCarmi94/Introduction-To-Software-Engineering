@@ -35,8 +35,8 @@ namespace Milestone3.Presentation_Layer.ViewModel
 
         private void OpenBoardButton(object sender, RoutedEventArgs e)//Board
         {
-            BoardWindow boardWindow = new BoardWindow(this.menuDC.getLoggedInEmail(), menuDC.service);
-            boardWindow.Show();
+            BoardsSelect boardsWindow = new BoardsSelect(this.menuDC.getLoggedInEmail(), menuDC.service);
+            boardsWindow.Show();
             this.Close();
         }
 

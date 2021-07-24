@@ -54,7 +54,8 @@ namespace Milestone3.Bussiness_Layer.Logic
                 return false;
             User u = new User(email, pass);
             hashUsers.Add(email, u);
-            return u.GetHandler().SaveNewUser(email, pass); ;
+            //return u.GetHandler().SaveNewUser(email, pass);
+            return u.GetHandler().SaveNewUser(email, pass);
         }
         public static User getUserByEmail(String email) //TODO check null with the function using it
         {

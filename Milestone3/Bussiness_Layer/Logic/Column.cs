@@ -126,7 +126,7 @@ namespace Milestone3.Bussiness_Layer.Logic
         {
             try
             {
-                Task add = new Task(UserID, Description, day, month, year, taskTitle);
+                Task add = new Task(Description, day, month, year, taskTitle);
                 if ((MaxTasks == -1 | numOfTasksInThisColum+1 <= MaxTasks))
                 {
                     this.tasksList.Add(add);
@@ -195,6 +195,8 @@ namespace Milestone3.Bussiness_Layer.Logic
         }
 
 
+
+
         public void limitTasksNum(int limit)
         {
             if (!(this.numOfTasksInThisColum > limit))
@@ -252,8 +254,7 @@ namespace Milestone3.Bussiness_Layer.Logic
             return filteredList.ToList<Task>();
         }
 
-
-
+        
     }
 
 }

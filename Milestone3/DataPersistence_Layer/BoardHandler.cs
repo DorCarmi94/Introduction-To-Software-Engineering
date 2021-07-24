@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using log4net;
 using System.Data.SQLite;
+using System.Windows;
 
 namespace Milestone3.DataPersistence_Layer
 {
@@ -17,8 +18,10 @@ namespace Milestone3.DataPersistence_Layer
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private BinaryFormatter binaryFormatter;
-        List<DummyBoard> dummyBoards;
         private static String fileName = "MyBoards.dat";
+        private static string database_name = "KanBanDb.sqlite";
+
+        private List<DummyBoard> dummyBoards;
 
         public BoardHandler()
         {
@@ -43,91 +46,115 @@ namespace Milestone3.DataPersistence_Layer
         }
         public List<DummyBoard> LoadBoards()
         {
-            string connection_string = null;
-            string sql_query = null;
-            string database_name = "KanBanDb.sqlite";
-
+            dummyBoards = new List<DummyBoard>();
             SQLiteConnection connection;
-            SQLiteCommand command;
-
-            connection_string = $"Data Source={database_name};Version=3";
+            string connection_string = $"Data Source={database_name};Version=3";
             connection = new SQLiteConnection(connection_string);
-            SQLiteDataReader dataReader;
 
             try
             {
                 connection.Open();
-
                 string sql = "select * from Boards";
-
-                
                 SQLiteCommand c = new SQLiteCommand(sql, connection);
                 SQLiteDataReader reader = c.ExecuteReader();
                 while (reader.Read())
                 {
-                    string boardName =(string) reader["BoardName"];
-                    long boardID = (long)reader["BoardID"];
-                    string boardIdStr = Convert.ToString(boardID);
-                    
-                    List<String> columnIDs = this.getColumnsOfBoards(connection, boardID);
-                    DummyBoard dummyBoard = new DummyBoard(boardName, boardIdStr, columnIDs);
+                    string boardName = reader["BoardName"].ToString();
+                    string boardId = reader["BoardID"].ToString();
+
+                    DummyBoard dummyBoard = new DummyBoard(boardName, boardId);
+                    dummyBoards.Add(dummyBoard);
                     Console.WriteLine(boardName);
                 }
-                
-
-            }
-            catch (Exception e)
-            {
-
-            }
-
-
-
-
-
-            try
-            {
-                FileStream myFileStream = File.Open(fileName, FileMode.Open);
-                dummyBoards = (List<DummyBoard>)binaryFormatter.Deserialize(myFileStream);
-                myFileStream.Dispose();
-            }
-            catch (Exception e)
-            {
-                dummyBoards = new List<DummyBoard>();
-                log.Error("Error Deserializing boards file, exception:" + e.Message);
-                binaryFormatter = new BinaryFormatter();
-            }
-
-            return dummyBoards;
-        }
-
-        public List<String> getColumnsOfBoards(SQLiteConnection connection,long boardID)
-        {
-            List<String> BoardCols = new List<string>();
-            try
-            {
-
-                string sql2 = "Select ColumnID From Columns Where BoardID = @boardID ORDER BY IndexOfColInBoard";
-                SQLiteCommand commandGetColumns = new SQLiteCommand(sql2, connection);
-                SQLiteParameter paramBoardID = new SQLiteParameter(@"boardID", boardID);
-                commandGetColumns.Parameters.Add(paramBoardID);
-
-
-                SQLiteDataReader reader2 = commandGetColumns.ExecuteReader();
-                while(reader2.Read())
+                connection.Close();
+                foreach (DummyBoard db in dummyBoards)
                 {
-                    long l = (long)reader2.GetValue(0);
-                    BoardCols.Add(Convert.ToString(l));
+                    db.columnsIDs = getColumnsOfBoards(connection, db.boardId);
+
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                return new List<string>();
+                log.Error("error reading boards from database. problem message: " + e.Message);
+                dummyBoards = new List<DummyBoard>();
+            }
+            return dummyBoards;
+        }
+        private List<string> getColumnsOfBoards(SQLiteConnection connection, string boardID)
+        {
+            List<string> columns = new List<string>();
+            try
+            {
+                connection.Open();
+
+                string sql = "SELECT ColumnID from Columns WHERE BoardID='" + boardID + "' Order by IndexOfColInBoard";
+
+
+                SQLiteCommand c = new SQLiteCommand(sql, connection);
+                SQLiteDataReader reader = c.ExecuteReader();
+                while (reader.Read())
+                {
+                    string colID = reader["ColumnID"].ToString();
+                    columns.Add(colID);
+                }
+                connection.Close    ();
+
+
+            }
+            catch (Exception e)
+            {
+                log.Error("problem reading column from database. problem message: " + e.Message);
+                columns = new List<string>();
+            }
+            return columns;
+        }
+
+        public string deleteBoard(string boardID)
+        {
+            DummyBoard toFind = this.dummyBoards.
+                Find(item => item.boardId.Equals(boardID));
+            if (toFind == null)
+            {
+                return "The board wasn't found in the presistence layer";
             }
 
-            return BoardCols;
+            if (this.dummyBoards.Remove(toFind))
+            {
+                string connection_string = null;
+                string database_name = "KanBanDb.sqlite";
+
+                SQLiteConnection connection;
+                SQLiteCommand command;
+
+
+                try
+                {
+                    connection_string = $"Data Source={database_name};Version=3";
+                    connection = new SQLiteConnection(connection_string);
+                    connection.Open();
+                    command = new SQLiteCommand(null, connection);
+
+                    command.CommandText =
+                      "DELETE FROM Boards Where BoardID = '" + boardID + "'";
+
+                    command.ExecuteNonQuery();
+                    command.Dispose();
+                    return "";
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(":" + e.Message);
+                    log.Error(e.Message);
+                    return "Something went wrong: e.Message";
+                }
+            }
+            else
+            {
+                return "Something went wrong";
+            }
         }
-        public bool saveBoard(DummyBoard dummyBoard)
+
+        public bool saveBoard(DummyBoard dummyBoard, string user)
         {
             if (dummyBoard == null)
             {
@@ -139,25 +166,71 @@ namespace Milestone3.DataPersistence_Layer
             if (toFind != null)
             {
                 this.dummyBoards.Remove(toFind);
-
             }
+            else
 
-            this.dummyBoards.Add(dummyBoard);
+                this.dummyBoards.Add(dummyBoard);
+
+            return saveInSQLDataBase(dummyBoard, user); //change to user 
+        }
+        private void deleteFromSql(DummyBoard toDelete)
+        {
+
+        }
+        private bool saveInSQLDataBase(DummyBoard toSave, String user)
+        {
+            SQLiteConnection connection;
+            string connection_string = $"Data Source={database_name};Version=3";
+            connection = new SQLiteConnection(connection_string);
+
             try
             {
-                FileStream myFileStream = File.Open(fileName, FileMode.Open);
-                binaryFormatter.Serialize(myFileStream, dummyBoards);
-                myFileStream.Dispose();
-                log.Info("Board ID: " + dummyBoard.boardId + " saved successfully to hard disk");
+                connection.Open();
+
+                String query = "INSERT INTO Boards (BoardID,BoardName,Email_UserID) VALUES (@boardID,@boardName,@user)";
+                SQLiteCommand command = new SQLiteCommand(query, connection);
+                SQLiteParameter param0 = new SQLiteParameter("@boardID", toSave.boardId);
+                SQLiteParameter param1 = new SQLiteParameter("@boardName", toSave.boardName);
+                SQLiteParameter param2 = new SQLiteParameter("@user", user);
+
+                command.Parameters.Add(param0);
+                command.Parameters.Add(param1);
+                command.Parameters.Add(param2);
+
+                command.ExecuteNonQuery();
+                connection.Close();
                 return true;
             }
             catch (Exception e)
             {
-                binaryFormatter = new BinaryFormatter();
-                log.Error("Error saving changes to boards file when trying to save the board with the following ID: " + dummyBoard.boardId + " , exception messeage:" + e.Message);
+                log.Error("Problem saving board: " + toSave.boardId + " problem message: " + e.Message);
                 return false;
             }
         }
+
+        private bool updateSQLDataBase(DummyBoard toUpdate, String user)
+        {
+            SQLiteConnection connection;
+            string connection_string = $"Data Source={database_name};Version=3";
+            connection = new SQLiteConnection(connection_string);
+
+            try
+            {
+                connection.Open();
+                string sql = "update Boards SET BoardID=@param0    ";
+                SQLiteCommand c = new SQLiteCommand(sql, connection);
+                SQLiteDataReader reader = c.ExecuteReader();
+                connection.Close();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                log.Error("Problem saving board: " + toUpdate.boardId + " problem message: " + e.Message);
+                return false;
+            }
+        }
+        //TODO change update!
     }
 
 

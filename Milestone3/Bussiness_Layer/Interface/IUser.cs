@@ -135,5 +135,20 @@ namespace Milestone3.Bussiness_Layer.Interface
             return true;
         }
         public static bool startUp() { return User.startUp(); }
+
+        public bool checkIfBoardBelongsToUser(string userID, string boardID)
+        {
+
+            if (userID == null || boardID == null)
+            {
+                return false;
+            }
+            List<String> userBoards = User.getBoardsByEmail(userID);
+            if (userBoards == null)
+            {
+                return false;
+            }
+            return userBoards.Contains(boardID);
+        }
     }
 }

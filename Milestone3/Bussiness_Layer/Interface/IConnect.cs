@@ -39,12 +39,29 @@ namespace Milestone3.Bussiness_Layer.Interface
         //STARTUP
         public void stratUpAll()
         {
-            IUser.startUp();
-            myIBoard.startUp();
             myIColumn.startUp();
+            myIBoard.startUp();
+
+            IUser.startUp();
 
         }
         //GETS
+
+        public String getBoard(String boardID)
+        {
+            if (userID == null)
+            {
+                log.Error(" unsigned user. Cannot access boards");
+                return ("");
+            }
+            if (boardID == null)
+            {
+                log.Error(" board or column null");
+                return ("");
+            }
+
+            return myIBoard.LoadSpecificBoard(boardID);
+        }
 
         public List<String> getColumnsIDList()
         {
@@ -125,13 +142,13 @@ namespace Milestone3.Bussiness_Layer.Interface
             {
                 log.Info("user " + email + "logged in!");
                 this.userID = email;
-                List<string> currBoardIDlst= this.getUserBoards(); 
-                if(currBoardIDlst==null)
-                {
-                    log.Error("Something went wrong with loading board of the user: " +email);
-                    return "Something went wrong with loading your board.";
-                }
-                this.boardID = currBoardIDlst[0];
+                //List<string> currBoardIDlst= this.getUserBoards(); 
+                //if(currBoardIDlst==null)
+                //{
+                //    log.Error("Something went wrong with loading board of the user: " +email);
+                //    return "Something went wrong with loading your board.";
+                //}
+                //this.boardID = currBoardIDlst[0];
                 return email;
             }
             else
@@ -180,23 +197,32 @@ namespace Milestone3.Bussiness_Layer.Interface
 
                 return IUser.checkUserPassReason(pass);
             }
-            myIUser.CreateNewUser(email, pass); //TODO check bool
-            this.boardID = myIBoard.createNewBoard(email); // TODO check if string not empty. Important to keep it with this because assign columns to board uses it
-            
-            string assignSucceed = assignBoardToUser(email, boardID);
-            if (!assignSucceed.Equals(""))
-                return assignSucceed; //if the assign failed, returns the reason
-            List<String> newColumnsIDsList = createDeafaultColumnsForNewBoard();
-            bool assignColsBoardSucceed = newColumnsIDsList != null;
-            this.boardID = null;
-            if (assignColsBoardSucceed == false)
-                return "assign Col To Board failed";
-            return "";
+            if (!myIUser.CreateNewUser(email, pass))
+            {
+                return "Problem with creating new user";
+            }
+            else
+            {
+                this.userID = email;
+                string ans= createNewBoard_private(email);
+                this.userID = null;
+                return ans;
+            }
+
+            //myIUser.CreateNewUser(email, pass); //TODO check bool
+            //this.boardID = myIBoard.createNewBoard(email,email); // TODO check if string not empty. Important to keep it with this because assign columns to board uses it
+
+            //string assignSucceed = assignBoardToUser(email, boardID);
+            //if (!assignSucceed.Equals(""))
+            //    return assignSucceed; //if the assign failed, returns the reason
+            //List<String> newColumnsIDsList = createDeafaultColumnsForNewBoard(boardID);
+            //bool assignColsBoardSucceed = newColumnsIDsList != null;
+            //this.boardID = null;
+            //if (assignColsBoardSucceed == false)
+            //    return "assign Col To Board failed";
+            //return "";
         }
-        private string createNewBoard(String boardName)
-        {
-            return myIBoard.createNewBoard(boardName);
-        }
+        
         private string assignBoardToUser(string email, string boardID)
         {
             /*if (!checkIfLoggedIn())
@@ -215,19 +241,26 @@ namespace Milestone3.Bussiness_Layer.Interface
             myIUser.AssignBoardToUser(email, boardID);
             return "";
         }
-        public List<String> createDeafaultColumnsForNewBoard()
+        public List<String> createDeafaultColumnsForNewBoard(string boardID)
         {
             List<String> newColumnsIDsList = new List<string>();
-            newColumnsIDsList = myIColumn.createDeafaultColumnsForNewBoard();
+            newColumnsIDsList = myIColumn.createDeafaultColumnsForNewBoard(boardID);
             foreach (var newCol in newColumnsIDsList)
             {
-                this.assignColumnToBoard(newCol);
+                this.assignColumnToBoard(newCol, boardID);
             }
             return newColumnsIDsList;
         }
-        public bool assignColumnToBoard(string columnID)
+        public bool assignColumnToBoard(string columnID, string boardID)
         {
-            return myIBoard.assignColumnToBoard(this.boardID, columnID);
+            if (boardID != null && columnID != null)
+            {
+                return myIBoard.assignColumnToBoard(boardID, columnID, this.userID);
+            }
+            else
+            {
+                return false;
+            }
         }
         //---
         public string changeUserPass(string currPass, string newPass)
@@ -281,8 +314,88 @@ namespace Milestone3.Bussiness_Layer.Interface
         public bool checkIfLoggedIn()
         {
             bool checkUser = (userID == null);
-            bool checkBoardID = (boardID == null);
-            return (checkUser == false && checkBoardID == false);
+
+            return (checkUser == false);
+        }
+
+        //Boards
+        
+        public string createNewBoard(string newBoardName)
+        {
+            return this.createNewBoard_private(newBoardName);
+
+        }//UserCreating newBoard
+        private string createNewBoard_private(String boardName)
+        {
+            string newBoardID = myIBoard.createNewBoard(boardName, this.userID);
+            string assignSucceed = assignBoardToUser(this.userID, newBoardID);
+            if (!assignSucceed.Equals(""))
+                return assignSucceed; //if the assign failed, returns the reason
+            List<String> newColumnsIDsList = createDeafaultColumnsForNewBoard(newBoardID);
+            bool assignColsBoardSucceed = newColumnsIDsList != null;
+            this.boardID = null;
+            if (assignColsBoardSucceed == false)
+                return "assign Col To Board failed";
+            return "";
+        }
+
+        public string loadSpecificBoard(String boardID)
+        {
+            if (userID == null)
+            {
+                return "Cannot load board. User is unassigned. ";
+            }
+            if (boardID == null)
+            {
+                return "Invalid input";
+            }
+            else if (!myIUser.checkIfBoardBelongsToUser(userID, boardID))
+            {
+                return "Cannot load this board. Doesn't belong to this user.";
+            }
+            else
+            {
+                this.boardID = boardID;
+                return "";
+            }
+        }
+
+        public string removeBoard(String boardID)
+        {
+            if (userID == null)
+            {
+                return "Cannot remove board. User is unassigned. ";
+            }
+            if (boardID == null)
+            {
+                return "Invalid input";
+            }
+            else if (!myIUser.checkIfBoardBelongsToUser(userID, boardID))
+            {
+                return "Cannot remove this board. Doesn't belong to this user.";
+            }
+            else
+            {
+                return deleteBoard(boardID, userID);
+            }
+        }
+
+        private string deleteBoard(string boardID, string userEmail)
+        {
+            List<String> columnInBoard=myIBoard.getColumnsIDsListOfBoard(boardID);
+            bool ans = true;
+            foreach (var col in columnInBoard)
+            {
+                ans= ans & this.removeColumnFromBoard(col,boardID, "force");
+            }
+            if(ans)
+            {
+                return myIBoard.deleteBoard(boardID);
+            }
+            else
+            {
+                return "Something went wrong with deleting the columns of this board";
+            }
         }
 
         //COLUMNS
@@ -302,14 +415,14 @@ namespace Milestone3.Bussiness_Layer.Interface
             {
                 return "";
             }
-            string newColID = myIColumn.addNewColumn(colName);
+            string newColID = myIColumn.addNewColumn(colName, this.boardID);
             if (newColID.Equals(""))
             {
                 return "";
             }
             else
             {
-                if (this.assignColumnToBoard(newColID))
+                if (this.assignColumnToBoard(newColID, this.boardID))
                 {
                     return newColID;
                 }
@@ -320,7 +433,23 @@ namespace Milestone3.Bussiness_Layer.Interface
             }
 
         }
+
         public bool removeColumnFromBoard(string columnID)
+        {
+            return removeColumnFromBoard(columnID, "user request");
+        }
+        private bool removeColumnFromBoard(string columnID, string mode)
+        {
+            if(this.boardID==null)
+            {
+                return false;
+            }
+            else
+            {
+                return removeColumnFromBoard(columnID, this.boardID, mode);
+            }
+        }
+        private bool removeColumnFromBoard(string columnID, string boardID, string mode)
         {
             if (columnID == null)
             {
@@ -328,13 +457,22 @@ namespace Milestone3.Bussiness_Layer.Interface
             }
             else
             {
-                string ans = myIBoard.checkIfPossibleToUnAssignColumnFormBoard(this.boardID, columnID);
+                string ans = "";
+                if (!mode.Equals("force"))
+                {
+                    ans = myIBoard.checkIfPossibleToUnAssignColumnFormBoard(boardID, columnID);
+                }
                 if (ans.Equals(""))
                 {
                     string iColumnAns = myIColumn.RemoveColumn(columnID);
                     if (!iColumnAns.Equals(Guid.Empty.ToString()))
                     {
-                        bool iBoardAns = myIBoard.unAssignColumnToBoard(this.boardID, columnID);
+                        bool iBoardAns=true;
+                        if (!mode.Equals("force"))
+                        {
+                            iBoardAns= myIBoard.unAssignColumnToBoard(boardID, columnID, this.userID);
+                            refreshColumnsPosition();
+                        }
                         return iBoardAns;
                     }
 
@@ -348,13 +486,29 @@ namespace Milestone3.Bussiness_Layer.Interface
             }
         }
 
+        public void refreshColumnsPosition()
+        {
+            List<String> colInCurrBoard = myIBoard.getColumnsIDsListOfBoard(boardID);
+            int i = 0;
+            foreach (var col in colInCurrBoard)
+            {
+                myIColumn.refreshPosition(col, i);
+                i++;
+            }
+        }
+
+
         public bool changeColumnsOrder(string colID1, string colID2)
         {
             if (colID1 == null || colID2 == null)
             {
                 return false;
             }
-            return myIBoard.changeColumnsOrder(this.boardID, colID1, colID2);
+            
+                bool ans= myIBoard.changeColumnsOrder(this.boardID, colID1, colID2);
+            refreshColumnsPosition();
+            return ans;
+
         }
         public string checkNext(string colID)
         {
@@ -367,7 +521,7 @@ namespace Milestone3.Bussiness_Layer.Interface
         }
 
         //TASKS
-        public string promote(string CurrentColID,string taskID)
+        public string promote(string CurrentColID,string taskID) //Promote task!!!
         {
             string nextCol = this.checkNext(CurrentColID);
 
@@ -377,6 +531,7 @@ namespace Milestone3.Bussiness_Layer.Interface
             }
             else if (myIColumn.Promote(CurrentColID, nextCol, taskID))
             {
+               
                 return "";
             }
             else

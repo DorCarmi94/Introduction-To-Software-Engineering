@@ -18,9 +18,19 @@ namespace Milestone3.Bussiness_Layer.Logic
             allColumnsList = new List<Column>();
             myColumnHandler = new ColumnHandler();
         }
-        public void saveColumn(DummyColumn dummyColumn)
+        public void saveTask(Task newTask, string colID)
         {
-            myColumnHandler.saveColumn(dummyColumn);
+            DummyTask newDummyTask = newTask.toDummy();
+            myColumnHandler.saveTask(newDummyTask, colID);
+        }
+        public void saveExistingTask(Task existingTask, string colID)
+        {
+            DummyTask existingDummyTask = existingTask.toDummy();
+            myColumnHandler.saveExistingTask(existingDummyTask, colID);
+        }
+        public void saveColumn(DummyColumn dummyColumn, string boardID ,int index)
+        {
+            myColumnHandler.saveColumn(dummyColumn, boardID, index);
         }
         public void startUp()
         {
@@ -56,7 +66,7 @@ namespace Milestone3.Bussiness_Layer.Logic
             return retCol;
         }
 
-        public List<Column> createDefaultColumns()
+        public List<Column> createDefaultColumns(string boardID)
         {
             List<Column> newCols = new List<Column>();
             Column backlog = new Column("Backlog");
@@ -80,9 +90,9 @@ namespace Milestone3.Bussiness_Layer.Logic
             DummyColumn IsDoneDummy = new DummyColumn(IsDone.getColName(),
                 IsDone.getColId().ToString());
 
-            myColumnHandler.saveColumn(backlogDummy);
-            myColumnHandler.saveColumn(InProgressDummy);
-            myColumnHandler.saveColumn(IsDoneDummy);
+            myColumnHandler.saveColumn(backlogDummy, boardID, 0);
+            myColumnHandler.saveColumn(InProgressDummy, boardID, 1);
+            myColumnHandler.saveColumn(IsDoneDummy, boardID, 2);
 
             return newCols;
         }
@@ -129,8 +139,7 @@ namespace Milestone3.Bussiness_Layer.Logic
                 else
                 {
                     colToMoveTo.AddTask(taskToMove);
-                    this.saveColumn(colFrom.turnThisColumnToDummy());
-                    this.saveColumn(colToMoveTo.turnThisColumnToDummy());
+                    myColumnHandler.promoteTask(taskToMove.getTaskID().ToString(),colToMoveTo.getColId().ToString());
                     ans = true;
                 }
 
@@ -139,7 +148,7 @@ namespace Milestone3.Bussiness_Layer.Logic
         }
 
 
-        public Guid addNewColumn(string colName)
+        public Guid addNewColumn(string colName, string boardID)
         {
             Column col = this.allColumnsList.Find(item => item.getColName().Equals(colName));
             if (col != null)
@@ -150,7 +159,7 @@ namespace Milestone3.Bussiness_Layer.Logic
             Column newCol = new Column(colName);
             this.allColumnsList.Add(newCol);
             DummyColumn dummyColumn = new DummyColumn(newCol.getColName(), newCol.getColId().ToString());
-            myColumnHandler.saveColumn(dummyColumn);
+            myColumnHandler.saveColumn(dummyColumn,boardID, -1);
             return newCol.getColId();
         }
 
@@ -161,13 +170,17 @@ namespace Milestone3.Bussiness_Layer.Logic
             {
                 this.allColumnsList.Remove(col);
                 myColumnHandler.removeColumn(col.turnThisColumnToDummy());
+                
                 return col.getColId();
             }
             log.Error("Column to remove doesn't exist");
             return Guid.Empty;
         }
 
-
+        public void refreshColPosition(Guid guid, int index)
+        {
+            myColumnHandler.refreshColumns(guid.ToString(), index);
+        }
     }
 
 }

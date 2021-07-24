@@ -23,25 +23,25 @@ namespace Milestone3.Bussiness_Layer.Logic
             this.BoardsList = new List<Board>();
         }
 
-        public string createNewBoard(string BoardName)
+        public string createNewBoard(string BoardName,string user)
         {
             Board newBoard = new Board(BoardName);
             DummyBoard newDummyBoard = newBoard.boardToDummy();
-            if (myBoardHandler.saveBoard(newDummyBoard))
+            if (myBoardHandler.saveBoard(newDummyBoard,user))
             {
                 this.BoardsList.Add(newBoard);
                 return newBoard.getBoardId().ToString();
             }
             return "";
         }
-        public bool saveBoard(Board board)
+        public bool saveBoard(Board board,string user)
         {
             if (board == null)
             {
                 log.Error("trying to save a null board");
                 return false;
             }
-            return myBoardHandler.saveBoard(board.boardToDummy());
+            return myBoardHandler.saveBoard(board.boardToDummy(),user);
         }
         public Board getByBoardId(Guid boardID)
         {
@@ -88,6 +88,27 @@ namespace Milestone3.Bussiness_Layer.Logic
                 str = board.ToString() + "\n";
             }
             return str;
+        }
+
+        public string deleteBoard(Guid boardID_guid)
+        {
+            Board theBoardToDelete = this.getByBoardId(boardID_guid);
+            if(theBoardToDelete==null)
+            {
+                return "The board ID wasn't found";
+            }
+            
+            if (this.BoardsList.Remove(theBoardToDelete))
+            {
+                return myBoardHandler.deleteBoard(boardID_guid.ToString());
+                
+            }
+            
+            else
+            {
+                return "Something went wrong with deleting the board";
+            }
+
         }
     }
 }

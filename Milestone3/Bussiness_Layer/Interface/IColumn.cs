@@ -125,7 +125,6 @@ namespace Milestone3.Bussiness_Layer.Interface
                     }
                     output.Add(thetask.getTaskID().ToString());
                     output.Add(thetask.getCreationDate().ToString());
-                    output.Add(thetask.getCreatorId().ToString());
                     output.Add(thetask.getTitle());
                     output.Add(thetask.getDescription());
                     output.Add(thetask.getDueDate().ToString());
@@ -140,9 +139,9 @@ namespace Milestone3.Bussiness_Layer.Interface
         /// Returns List of strings with the new columns IDs
         /// </summary>
         /// <returns></returns>
-        public List<String> createDeafaultColumnsForNewBoard()
+        public List<String> createDeafaultColumnsForNewBoard(string boardID)
         {
-            List<Column> newColumns = myColumns.createDefaultColumns();
+            List<Column> newColumns = myColumns.createDefaultColumns(boardID);
             List<String> newColumnsIDsList = new List<string>();
 
             foreach (var item in newColumns)
@@ -174,9 +173,9 @@ namespace Milestone3.Bussiness_Layer.Interface
             return c == null;
         }
 
-        public String addNewColumn(String colName)
+        public String addNewColumn(String colName, String boardID)
         {
-            Guid ans = myColumns.addNewColumn(colName);
+            Guid ans = myColumns.addNewColumn(colName,boardID);
             if (ans.Equals(Guid.Empty))
             {
                 return "";
@@ -264,8 +263,6 @@ namespace Milestone3.Bussiness_Layer.Interface
                 Column theCol = myColumns.getByColumnID(ColumnID);
                 Task newTask = theCol.createNewTask(UserID, Description, taskTitle, day, month, year);
 
-
-
                 if (newTask == null)
                 {
                     log.Error("Couldnt create new task. Problem related to limit of tasks number");
@@ -273,7 +270,7 @@ namespace Milestone3.Bussiness_Layer.Interface
                 }
                 else
                 {
-                    myColumns.saveColumn(theCol.turnThisColumnToDummy());
+                    myColumns.saveTask(newTask, columnID);
                     return newTask.getTaskID().ToString();
                 }
             }
@@ -318,7 +315,6 @@ namespace Milestone3.Bussiness_Layer.Interface
         }
 
         public string TaskModify(String colID, String taskID, String Description, String taskTitle, int day, int month, int year)
-
         {
             if (!(Guid.TryParse(taskID, out Guid TaskID_guid)) & !(Guid.TryParse(colID, out Guid colID_guid)))
             {
@@ -337,13 +333,15 @@ namespace Milestone3.Bussiness_Layer.Interface
                 else
                 {
                     bool ans = theCol.TaskModify(TaskID_guid, day, month, year, taskTitle, Description);
-                    myColumns.saveColumn(theCol.turnThisColumnToDummy());
+                    Task theTaskUpdated = theCol.getTask(TaskID_guid);
+                    myColumns.saveExistingTask(theTaskUpdated,theCol.getColId().ToString());
+                    
                     return "";
                 }
 
             }
         }
-
+        
         public bool limitNumOfTasksInColum(String columnID, int limit)
         {
             if (!(Guid.TryParse(columnID, out Guid ColID_guid)))
@@ -361,6 +359,12 @@ namespace Milestone3.Bussiness_Layer.Interface
                 }
                 return false;
             }
+        }
+
+        public void refreshPosition(string col, int index)
+        {
+            myColumns.refreshColPosition(Guid.Parse(col), index);
+            
         }
 
         public int getNumOfTasksInColumn(string columnID)

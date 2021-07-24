@@ -18,16 +18,22 @@ namespace Milestone3.Bussiness_Layer.Logic
         public static int maxCharsTitle = 50;
         public static DateTime ERROR_DATE = new DateTime(0);
 
-        private string creatorID;
         private DateTime creationTime;
         private string description;
         private DateTime dueDate;
         private Guid taskID;
+
+        public DummyTask toDummy()
+        {
+            DummyTask DT = new DummyTask(taskID.ToString(), title, description, creationTime.ToString(), dueDate.ToString());
+            return DT;
+        }
+
         private string title;
 
 
 
-        public Task(string creatorID, string description, DateTime dueDate, string title)
+        public Task( string description, DateTime dueDate, string title)
         {
 
             dueDate = checkDate(dueDate);
@@ -38,7 +44,6 @@ namespace Milestone3.Bussiness_Layer.Logic
             if (!checkDescription(description) | !checkTitle(title))
                 throw new ArgumentException("empty title/ too long title/description"); //enforcing Task limitation
 
-            this.creatorID = creatorID;
             this.creationTime = DateTime.Now;
             this.description = description;
             this.dueDate = dueDate;
@@ -50,13 +55,12 @@ namespace Milestone3.Bussiness_Layer.Logic
         {
 
             this.dueDate = DateTime.Parse(dummy.dueDate);
-            this.creatorID = dummy.UserID;
             this.creationTime = DateTime.Parse(dummy.creationDate);
             this.description = dummy.Description;
             this.taskID = Guid.Parse(dummy.TaskID);
             this.title = dummy.Title;
         }
-        public Task(string creatorID, string description, int day, int month, int year, string title)
+        public Task( string description, int day, int month, int year, string title)
         {
             DateTime dueDate = checkDate(year, month, day);
             if (dueDate.Equals(ERROR_DATE)) // compare if equal to DateTime returned that indicate an error (see this.checkDate())   
@@ -68,7 +72,6 @@ namespace Milestone3.Bussiness_Layer.Logic
 
 
 
-            this.creatorID = creatorID;
             this.creationTime = DateTime.Now;
             this.description = description;
             this.dueDate = dueDate;
@@ -78,7 +81,7 @@ namespace Milestone3.Bussiness_Layer.Logic
 
         public DummyTask turnThisToDummyTask()
         {
-            DummyTask dummyTask = new DummyTask(this.taskID.ToString(), this.creatorID, this.title, this.description,
+            DummyTask dummyTask = new DummyTask(this.taskID.ToString(), this.title, this.description,
                 this.creationTime.ToString(), this.dueDate.ToString());
 
             return dummyTask;
@@ -122,7 +125,6 @@ namespace Milestone3.Bussiness_Layer.Logic
 
 
 
-        public string getCreatorId() { return creatorID; }
         public DateTime getCreationDate() { return creationTime; }
         public string getDescription() { return description; }
         public DateTime getDueDate() { return dueDate; }
@@ -236,7 +238,7 @@ namespace Milestone3.Bussiness_Layer.Logic
         public override string ToString()
         {
             string str = "Task ID: " + this.taskID + "\n Title: " + this.title
-                + "\n User ID: " + this.creatorID + "\n Description: " +
+                + "\n Description: " +
                 this.description + "\n Creation Date: " + this.creationTime.ToString() +
                 "\n Due Date: " + this.dueDate.ToString();
 

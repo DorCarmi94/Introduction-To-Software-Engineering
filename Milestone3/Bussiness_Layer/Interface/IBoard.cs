@@ -22,7 +22,7 @@ namespace Milestone3.Bussiness_Layer.Interface
             boards = new Boards();
 
         }
-        public bool assignColumnToBoard(string boardID, string columnID)
+        public bool assignColumnToBoard(string boardID, string columnID,string user)
         {
             if (!(Guid.TryParse(boardID, out Guid boardID_guid)))
             {
@@ -37,7 +37,7 @@ namespace Milestone3.Bussiness_Layer.Interface
             Board b = boards.getByBoardId(boardID_guid);
             if (b == null)
                 return false;
-            return (b.assignColumnToBoard(columnID_guid) && boards.saveBoard(b));
+            return (b.assignColumnToBoard(columnID_guid)); //&& boards.saveBoard(b,user));
 
         }
         public bool changeColumnsOrder(string boardID, string colID1, string colID2)
@@ -102,12 +102,16 @@ namespace Milestone3.Bussiness_Layer.Interface
             return ans.ToString();
 
         }
-        public string createNewBoard(String boardName)
+        public string createNewBoard(String boardName,string user)
         {
-            return boards.createNewBoard(boardName);
+            return boards.createNewBoard(boardName,user);
         }
         public List<String> getColumnsIDsListOfBoard(String boardID)
         {
+            if(boardID==null)
+            {
+                return null;
+            }
             Board board = boards.getByBoardId(Guid.Parse(boardID));
             if (board == null)
                 return null;
@@ -132,7 +136,7 @@ namespace Milestone3.Bussiness_Layer.Interface
                     log.Error("Error trying to load unexisted board with the following ID: " + guid_str);
                     return ""; //TODO check if return an empty string
                 }
-                return currentBoard.ToString();
+                return currentBoard.getTitle();
             }
         }
         public void startUp()
@@ -143,7 +147,7 @@ namespace Milestone3.Bussiness_Layer.Interface
         {
             return boards.ToString();
         }
-        public bool unAssignColumnToBoard(string boardID, string columnID)
+        public bool unAssignColumnToBoard(string boardID, string columnID,string user)
         {
             if (!(Guid.TryParse(boardID, out Guid boardID_guid)))
             {
@@ -163,7 +167,7 @@ namespace Milestone3.Bussiness_Layer.Interface
                 return false;
             }
             bool ans = board.unAssignColumnToBoard(columnID_guid);
-            boards.saveBoard(board);
+            boards.saveBoard(board,user);
             return ans;
         }
         public bool ColumnInBoard(string boardID, string columnID)
@@ -200,6 +204,19 @@ namespace Milestone3.Bussiness_Layer.Interface
             if (board == null)
                 return -1;
             return board.positionOfColumn(columnID_guid);
+        }
+
+        public string deleteBoard(string boardID)
+        {
+            if (!(Guid.TryParse(boardID, out Guid boardID_guid)))
+            {
+                log.Warn("the following string couldn't parse to Guid object: boardID string: " + boardID);
+                return "the following string couldn't parse to Guid object: boardID string: ";
+            }
+
+            return boards.deleteBoard(boardID_guid);
+
+
         }
     }
 }

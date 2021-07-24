@@ -30,16 +30,13 @@ namespace Milestone3.Presentation_Layer
         public Login()
         {
             InitializeComponent();
-            fixPic();
+            
             this.UserDC = new UserWindowDataContext();
 
             this.DataContext = this.UserDC;
         }
 
-        private void fixPic()
-        {
-            
-        }
+        
 
         private void Login_Button_Click(object sender, RoutedEventArgs e)//Login
         {

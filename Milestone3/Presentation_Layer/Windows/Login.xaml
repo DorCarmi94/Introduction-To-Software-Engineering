@@ -18,9 +18,22 @@
                      HorizontalAlignment="Left" Margin="202,221,0,0" VerticalAlignment="Top" Width="133" Height="35" FontFamily="/Milestone3;component/bin/Debug/Accessories/#Password"/>
 
         <Button Content="Login" FontSize="18" FontWeight="DemiBold"
-                HorizontalAlignment="Left" Margin="396,174,0,0" VerticalAlignment="Top" Width="123" Click="Login_Button_Click" Height="42" Background="{x:Null}" BorderBrush="{x:Null}"/>
+                HorizontalAlignment="Left" Margin="396,239,0,0" VerticalAlignment="Top" Width="123" Click="Login_Button_Click" Height="42" Background="{x:Null}" BorderBrush="{x:Null}"/>
         <Button Content="Create User" FontSize="18" FontWeight="DemiBold" 
-                HorizontalAlignment="Left" Margin="532,174,0,0" VerticalAlignment="Top" Width="131" Height="42" Click="CreateNewUser_Button_Click" Background="{x:Null}" BorderBrush="{x:Null}"/>
+                HorizontalAlignment="Left" Margin="532,239,0,0" VerticalAlignment="Top" Width="131" Height="42" Click="CreateNewUser_Button_Click" Background="{x:Null}" BorderBrush="{x:Null}"/>
+        <Button Click="Login_Button_Click" Content="" HorizontalAlignment="Left" Margin="396,111,0,0" VerticalAlignment="Top" Width="123" Height="129" BorderBrush="{x:Null}" Foreground="{x:Null}" BorderThickness="0">
+            <Button.Background>
+                <ImageBrush ImageSource="pack://siteoforigin:,,,/Accessories/Unlock-icon.png" Stretch="Uniform"/>
+            </Button.Background>
+        </Button>
+        <Button Click="CreateNewUser_Button_Click" Content="" HorizontalAlignment="Left" Margin="532,111,0,0" VerticalAlignment="Top" Width="131" Height="130">
+            <Button.Background>
+                <ImageBrush ImageSource="pack://siteoforigin:,,,/Accessories/Plus-icon.png" Stretch="Uniform"/>
+            </Button.Background>
+            <Button.BorderBrush>
+                <ImageBrush/>
+            </Button.BorderBrush>
+        </Button>
         <Label Content="Welcome to Kanban" HorizontalAlignment="Left" Margin="1,20,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="50" Foreground="#FF2A2271" FontFamily="Showcard Gothic"/>
     </Grid>
 </Window>
