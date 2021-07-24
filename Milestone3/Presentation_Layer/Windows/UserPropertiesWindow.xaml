@@ -1,0 +1,27 @@
+﻿<Window x:Class="Milestone3.Presentation_Layer.Windows.UserPropertiesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Milestone3.Presentation_Layer.Windows"
+        mc:Ignorable="d"
+        Title="UserPropertiesWindow" Height="314.4" Width="800">
+    <Grid>
+
+        <Rectangle Fill="#FF1B88FF" HorizontalAlignment="Left" Height="149" Margin="31,82,0,0" Stroke="#FF2A2271" VerticalAlignment="Top" Width="511"/>
+
+        <Label Content="Change your password:" FontSize="30" FontWeight="Black" HorizontalAlignment="Left" Margin="35,28,0,0" VerticalAlignment="Top" Height="52" Width="378"/>
+        <Label Content="Email:" FontSize="18" HorizontalAlignment="Left" Margin="35,97,0,0" VerticalAlignment="Top" Height="34" Width="75" FontWeight="Bold" Foreground="White"/>
+        <Label Content="Current Password:" FontSize="18" HorizontalAlignment="Left" Margin="35,134,0,0" VerticalAlignment="Top" Height="34" Width="190" FontWeight="Bold" Foreground="White"/>
+        <Label Content="Your new Password:" FontSize="18" HorizontalAlignment="Left" Margin="35,172,0,0" VerticalAlignment="Top" Height="34" Width="209" Foreground="White" FontWeight="Bold"/>
+        <TextBox x:Name= "email_Box" FontSize="18"
+                 IsReadOnly="True" Height="34" Margin="249,97,266.333,0" TextWrapping="Wrap" Text="{Binding LoggedEmailUser, Mode=OneWay}" VerticalAlignment="Top"/>
+        <TextBox x:Name= "currPass_Box" FontSize="18"
+            Height="34" Margin="249,134,265.6,0" TextWrapping="Wrap" Text= "{Binding CurrPass, Mode=OneWayToSource}"  VerticalAlignment="Top"/>
+
+        <TextBox x:Name= "newPass_Box" FontSize="18" 
+            Height="34" Margin="249,173,264.6,0" TextWrapping="Wrap" Text="{Binding NewPass, Mode=OneWayToSource}" VerticalAlignment="Top"/>
+        <Button Content="Update Changes" HorizontalAlignment="Left" Margin="564,179,0,0" VerticalAlignment="Top" Width="163" Height="50" Click="Button_Click" Background="#FF1B88FF" FontWeight="Bold" FontSize="18" Foreground="White"/>
+
+    </Grid>
+</Window>
