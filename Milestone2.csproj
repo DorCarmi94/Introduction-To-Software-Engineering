@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{86CEDF4F-EF75-4B5D-90BB-E693AE779FAA}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Milestone2</RootNamespace>
+    <AssemblyName>Milestone2</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Bussiness_Layer\Interface\IConnect.cs" />
+    <Compile Include="Bussiness_Layer\Interface\IColumn.cs" />
+    <Compile Include="Bussiness_Layer\Interface\IUser.cs" />
+    <Compile Include="Bussiness_Layer\Interface\IBoard.cs" />
+    <Compile Include="Bussiness_Layer\Logic\Board.cs" />
+    <Compile Include="Bussiness_Layer\Logic\Boards.cs" />
+    <Compile Include="Bussiness_Layer\Logic\BoardsInterface.cs" />
+    <Compile Include="Bussiness_Layer\Logic\Column.cs" />
+    <Compile Include="Bussiness_Layer\Logic\Columns.cs" />
+    <Compile Include="Bussiness_Layer\Logic\DateComperator.cs" />
+    <Compile Include="Bussiness_Layer\Logic\Task.cs" />
+    <Compile Include="Bussiness_Layer\Logic\TestTask.cs" />
+    <Compile Include="Bussiness_Layer\Logic\User.cs" />
+    <Compile Include="Data_Persistence\BoardHandler.cs" />
+    <Compile Include="Data_Persistence\ColumnHandler.cs" />
+    <Compile Include="Data_Persistence\DummyBoard.cs" />
+    <Compile Include="Data_Persistence\DummyColumn.cs" />
+    <Compile Include="Data_Persistence\DummyTask.cs" />
+    <Compile Include="Data_Persistence\UserHandler.cs" />
+    <Compile Include="Program.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="log4net.config">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="LearningTemp\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
